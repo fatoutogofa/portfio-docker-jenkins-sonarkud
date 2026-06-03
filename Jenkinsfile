@@ -55,7 +55,6 @@ pipeline {
             steps {
                 echo '🔍 Analyse SonarQube...'
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    // Récupérer le réseau du container Jenkins pour y connecter le scanner
                     sh '''
                         JENKINS_NETWORK=$(docker inspect jenkins --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}')
                         echo "Réseau Jenkins détecté : $JENKINS_NETWORK"
@@ -63,6 +62,7 @@ pipeline {
                         # Analyse Backend
                         docker run --rm \
                             --network $JENKINS_NETWORK \
+                            --user root \
                             -v $(pwd)/DOCKER-main:/usr/src \
                             sonarsource/sonar-scanner-cli:latest \
                             -Dsonar.projectKey=portfolio-backend \
@@ -73,14 +73,15 @@ pipeline {
                             -Dsonar.language=js \
                             -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.login=${SONAR_TOKEN} \
-                            -Dsonar.ws.timeout=120
+                            -Dsonar.scanner.socketTimeout=120
 
-                        echo "⏳ Attente 30s pour que SonarQube traite le rapport backend..."
+                        echo "⏳ Attente 30s entre les deux analyses..."
                         sleep 30
 
                         # Analyse Frontend
                         docker run --rm \
                             --network $JENKINS_NETWORK \
+                            --user root \
                             -v $(pwd)/portfolio-spa-main:/usr/src \
                             sonarsource/sonar-scanner-cli:latest \
                             -Dsonar.projectKey=portfolio-frontend \
@@ -91,7 +92,7 @@ pipeline {
                             -Dsonar.language=js \
                             -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.login=${SONAR_TOKEN} \
-                            -Dsonar.ws.timeout=120
+                            -Dsonar.scanner.socketTimeout=120
                     '''
                 }
             }
