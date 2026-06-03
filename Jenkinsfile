@@ -67,8 +67,8 @@ pipeline {
                             sonarsource/sonar-scanner-cli:latest \
                             -Dsonar.projectKey=portfolio-backend \
                             -Dsonar.projectName="Portfolio Backend" \
-                            -Dsonar.sources=/usr/src/src \
-                            -Dsonar.exclusions="**/node_modules/**" \
+                            -Dsonar.sources=/usr/src \
+                            -Dsonar.exclusions="**/node_modules/**,**/.git/**" \
                             -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.login=${SONAR_TOKEN}
 
@@ -79,8 +79,8 @@ pipeline {
                             sonarsource/sonar-scanner-cli:latest \
                             -Dsonar.projectKey=portfolio-frontend \
                             -Dsonar.projectName="Portfolio Frontend" \
-                            -Dsonar.sources=/usr/src/src \
-                            -Dsonar.exclusions="**/node_modules/**,**/dist/**" \
+                            -Dsonar.sources=/usr/src \
+                            -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/.git/**" \
                             -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.login=${SONAR_TOKEN}
                     '''
