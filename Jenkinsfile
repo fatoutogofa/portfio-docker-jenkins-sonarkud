@@ -12,7 +12,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo '📥 Récupération du code source...'
-                checkout scm
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/fatoutogofa/portfio-docker-jenkins-sonarkud.git',
+                        credentialsId: 'github-credentials'
+                    ]]
+                ])
             }
         }
 
@@ -46,6 +53,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo '🚀 Déploiement avec Docker Compose...'
+                // Stopper et supprimer les anciens containers par nom (peu importe leur projet compose)
+                sh 'docker stop portfolio-backend portfolio-frontend || true'
+                sh 'docker rm portfolio-backend portfolio-frontend || true'
                 sh 'docker compose -f ${COMPOSE_FILE} down --remove-orphans || true'
                 sh 'docker compose -f ${COMPOSE_FILE} up -d --build'
             }
