@@ -72,7 +72,11 @@ pipeline {
                             -Dsonar.exclusions="**/node_modules/**,**/.git/**" \
                             -Dsonar.language=js \
                             -Dsonar.host.url=http://sonarqube:9000 \
-                            -Dsonar.login=${SONAR_TOKEN}
+                            -Dsonar.login=${SONAR_TOKEN} \
+                            -Dsonar.ws.timeout=120
+
+                        echo "⏳ Attente 30s pour que SonarQube traite le rapport backend..."
+                        sleep 30
 
                         # Analyse Frontend
                         docker run --rm \
@@ -86,7 +90,8 @@ pipeline {
                             -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/.git/**" \
                             -Dsonar.language=js \
                             -Dsonar.host.url=http://sonarqube:9000 \
-                            -Dsonar.login=${SONAR_TOKEN}
+                            -Dsonar.login=${SONAR_TOKEN} \
+                            -Dsonar.ws.timeout=120
                     '''
                 }
             }
