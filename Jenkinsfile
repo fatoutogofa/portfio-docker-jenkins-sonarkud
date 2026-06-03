@@ -68,7 +68,9 @@ pipeline {
                             -Dsonar.projectKey=portfolio-backend \
                             -Dsonar.projectName="Portfolio Backend" \
                             -Dsonar.sources=/usr/src \
+                            -Dsonar.inclusions="**/*.js" \
                             -Dsonar.exclusions="**/node_modules/**,**/.git/**" \
+                            -Dsonar.language=js \
                             -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.login=${SONAR_TOKEN}
 
@@ -80,7 +82,9 @@ pipeline {
                             -Dsonar.projectKey=portfolio-frontend \
                             -Dsonar.projectName="Portfolio Frontend" \
                             -Dsonar.sources=/usr/src \
+                            -Dsonar.inclusions="**/*.js,**/*.jsx" \
                             -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/.git/**" \
+                            -Dsonar.language=js \
                             -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.login=${SONAR_TOKEN}
                     '''
