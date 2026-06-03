@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        COMPOSE_FILE = 'docker-compose.deploy.yml'
+        COMPOSE_FILE   = 'docker-compose.deploy.yml'
         BACKEND_IMAGE  = 'portfolio-backend'
         FRONTEND_IMAGE = 'portfolio-frontend'
+        SONAR_URL      = 'http://sonarqube:9000'
     }
 
     stages {
@@ -50,10 +51,43 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                echo '🔍 Analyse SonarQube...'
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    // Analyse Backend
+                    sh '''
+                        docker run --rm \
+                            --network jenkins-pip_devops-net \
+                            -v $(pwd)/DOCKER-main:/usr/src \
+                            sonarsource/sonar-scanner-cli:latest \
+                            -Dsonar.projectKey=portfolio-backend \
+                            -Dsonar.projectName="Portfolio Backend" \
+                            -Dsonar.sources=/usr/src/src \
+                            -Dsonar.exclusions="**/node_modules/**" \
+                            -Dsonar.host.url=${SONAR_URL} \
+                            -Dsonar.token=${SONAR_TOKEN}
+                    '''
+                    // Analyse Frontend
+                    sh '''
+                        docker run --rm \
+                            --network jenkins-pip_devops-net \
+                            -v $(pwd)/portfolio-spa-main:/usr/src \
+                            sonarsource/sonar-scanner-cli:latest \
+                            -Dsonar.projectKey=portfolio-frontend \
+                            -Dsonar.projectName="Portfolio Frontend" \
+                            -Dsonar.sources=/usr/src/src \
+                            -Dsonar.exclusions="**/node_modules/**,**/dist/**" \
+                            -Dsonar.host.url=${SONAR_URL} \
+                            -Dsonar.token=${SONAR_TOKEN}
+                    '''
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 echo '🚀 Déploiement avec Docker Compose...'
-                // Stopper et supprimer les anciens containers par nom (peu importe leur projet compose)
                 sh 'docker stop portfolio-backend portfolio-frontend || true'
                 sh 'docker rm portfolio-backend portfolio-frontend || true'
                 sh 'docker compose -f ${COMPOSE_FILE} down --remove-orphans || true'

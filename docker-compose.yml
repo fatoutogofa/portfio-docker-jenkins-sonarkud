@@ -11,14 +11,34 @@ services:
     privileged: true
     user: root
     ports:
-      - "8080:8080"     # Interface web Jenkins
-      - "50000:50000"   # Agents Jenkins
+      - "8080:8080"
+      - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
       - //var/run/docker.sock:/var/run/docker.sock
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
     restart: unless-stopped
+    networks:
+      - devops-net
+
+  # ─────────────────────────────────────────────
+  # SonarQube — Analyse de code
+  # ─────────────────────────────────────────────
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    restart: unless-stopped
+    networks:
+      - devops-net
 
   # ─────────────────────────────────────────────
   # Backend Node.js / Express
@@ -34,6 +54,8 @@ services:
       - MONGODB_URI=mongodb+srv://babijou8_db_user:fFQ5o8JR94spCmF7@cluster0.vsshvby.mongodb.net/
       - PORT=5000
     restart: always
+    networks:
+      - devops-net
 
   # ─────────────────────────────────────────────
   # Frontend React / Nginx
@@ -48,6 +70,15 @@ services:
     depends_on:
       - backend
     restart: always
+    networks:
+      - devops-net
 
 volumes:
   jenkins_home:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+
+networks:
+  devops-net:
+    driver: bridge
