@@ -70,7 +70,7 @@ pipeline {
                             -Dsonar.sources=/usr/src/src \
                             -Dsonar.exclusions="**/node_modules/**" \
                             -Dsonar.host.url=http://sonarqube:9000 \
-                            -Dsonar.token=${SONAR_TOKEN}
+                            -Dsonar.login=${SONAR_TOKEN}
 
                         # Analyse Frontend
                         docker run --rm \
@@ -82,7 +82,7 @@ pipeline {
                             -Dsonar.sources=/usr/src/src \
                             -Dsonar.exclusions="**/node_modules/**,**/dist/**" \
                             -Dsonar.host.url=http://sonarqube:9000 \
-                            -Dsonar.token=${SONAR_TOKEN}
+                            -Dsonar.login=${SONAR_TOKEN}
                     '''
                 }
             }
