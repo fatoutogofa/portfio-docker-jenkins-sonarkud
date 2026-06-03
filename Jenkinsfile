@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        COMPOSE_FILE = 'docker-compose.yml'
+        COMPOSE_FILE = 'docker-compose.deploy.yml'
         BACKEND_IMAGE  = 'portfolio-backend'
         FRONTEND_IMAGE = 'portfolio-frontend'
     }

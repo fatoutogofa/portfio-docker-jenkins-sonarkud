@@ -1,0 +1,30 @@
+services:
+
+  # ─────────────────────────────────────────────
+  # Backend Node.js / Express
+  # ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./DOCKER-main
+      dockerfile: Dockerfile
+    container_name: portfolio-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb+srv://babijou8_db_user:fFQ5o8JR94spCmF7@cluster0.vsshvby.mongodb.net/
+      - PORT=5000
+    restart: always
+
+  # ─────────────────────────────────────────────
+  # Frontend React / Nginx
+  # ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./portfolio-spa-main
+      dockerfile: Dockerfile
+    container_name: portfolio-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
