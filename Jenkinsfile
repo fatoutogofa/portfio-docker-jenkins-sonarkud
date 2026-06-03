@@ -55,30 +55,33 @@ pipeline {
             steps {
                 echo '🔍 Analyse SonarQube...'
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    // Analyse Backend
+                    // Récupérer le réseau du container Jenkins pour y connecter le scanner
                     sh '''
+                        JENKINS_NETWORK=$(docker inspect jenkins --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}')
+                        echo "Réseau Jenkins détecté : $JENKINS_NETWORK"
+
+                        # Analyse Backend
                         docker run --rm \
-                            --network jenkins-pip_devops-net \
+                            --network $JENKINS_NETWORK \
                             -v $(pwd)/DOCKER-main:/usr/src \
                             sonarsource/sonar-scanner-cli:latest \
                             -Dsonar.projectKey=portfolio-backend \
                             -Dsonar.projectName="Portfolio Backend" \
                             -Dsonar.sources=/usr/src/src \
                             -Dsonar.exclusions="**/node_modules/**" \
-                            -Dsonar.host.url=${SONAR_URL} \
+                            -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.token=${SONAR_TOKEN}
-                    '''
-                    // Analyse Frontend
-                    sh '''
+
+                        # Analyse Frontend
                         docker run --rm \
-                            --network jenkins-pip_devops-net \
+                            --network $JENKINS_NETWORK \
                             -v $(pwd)/portfolio-spa-main:/usr/src \
                             sonarsource/sonar-scanner-cli:latest \
                             -Dsonar.projectKey=portfolio-frontend \
                             -Dsonar.projectName="Portfolio Frontend" \
                             -Dsonar.sources=/usr/src/src \
                             -Dsonar.exclusions="**/node_modules/**,**/dist/**" \
-                            -Dsonar.host.url=${SONAR_URL} \
+                            -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.token=${SONAR_TOKEN}
                     '''
                 }
