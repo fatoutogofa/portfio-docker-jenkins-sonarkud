@@ -1,4 +1,27 @@
 services:
+
+  # ─────────────────────────────────────────────
+  # Jenkins CI/CD
+  # ─────────────────────────────────────────────
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"     # Interface web Jenkins
+      - "50000:50000"   # Agents Jenkins
+    volumes:
+      - jenkins_home:/var/jenkins_home          # Persistance des données Jenkins
+      - /var/run/docker.sock:/var/run/docker.sock  # Accès au Docker de l'hôte
+      - /usr/bin/docker:/usr/bin/docker            # CLI Docker dans Jenkins
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # Backend Node.js / Express
+  # ─────────────────────────────────────────────
   backend:
     build:
       context: ./DOCKER-main
@@ -11,6 +34,9 @@ services:
       - PORT=5000
     restart: always
 
+  # ─────────────────────────────────────────────
+  # Frontend React / Nginx
+  # ─────────────────────────────────────────────
   frontend:
     build:
       context: ./portfolio-spa-main
@@ -21,3 +47,6 @@ services:
     depends_on:
       - backend
     restart: always
+
+volumes:
+  jenkins_home:
