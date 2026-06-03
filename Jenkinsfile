@@ -67,12 +67,12 @@ pipeline {
                 sh 'sleep 10'
                 sh 'docker compose -f ${COMPOSE_FILE} ps'
                 sh '''
-                    curl -f http://localhost:5000/ || \
-                    (echo "❌ Backend inaccessible" && exit 1)
+                    docker exec portfolio-backend \
+                        node -e "require('http').get('http://localhost:5000/', r => { console.log('✅ Backend HTTP', r.statusCode); process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', e => { console.error('❌', e.message); process.exit(1); })"
                 '''
                 sh '''
-                    curl -f http://localhost:80/ || \
-                    (echo "❌ Frontend inaccessible" && exit 1)
+                    docker exec portfolio-frontend \
+                        wget -qO- http://localhost:80/ > /dev/null && echo "✅ Frontend OK" || (echo "❌ Frontend inaccessible" && exit 1)
                 '''
             }
         }
