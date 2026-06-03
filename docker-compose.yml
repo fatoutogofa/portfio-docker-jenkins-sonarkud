@@ -4,7 +4,9 @@ services:
   # Jenkins CI/CD
   # ─────────────────────────────────────────────
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile
     container_name: jenkins
     privileged: true
     user: root
@@ -12,9 +14,8 @@ services:
       - "8080:8080"     # Interface web Jenkins
       - "50000:50000"   # Agents Jenkins
     volumes:
-      - jenkins_home:/var/jenkins_home          # Persistance des données Jenkins
-      - /var/run/docker.sock:/var/run/docker.sock  # Accès au Docker de l'hôte
-      - /usr/bin/docker:/usr/bin/docker            # CLI Docker dans Jenkins
+      - jenkins_home:/var/jenkins_home
+      - //var/run/docker.sock:/var/run/docker.sock
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
     restart: unless-stopped
