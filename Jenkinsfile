@@ -128,10 +128,34 @@ pipeline {
     post {
         success {
             echo '✅ Pipeline réussi — Application déployée avec succès.'
+            mail to: 'babijou8@gmail.com',
+                 subject: "✅ Jenkins Build #${BUILD_NUMBER} — SUCCESS",
+                 body: """
+Le pipeline jenkins-pip #${BUILD_NUMBER} a réussi.
+
+Projet  : ${JOB_NAME}
+Build   : #${BUILD_NUMBER}
+Statut  : SUCCESS ✅
+Durée   : ${currentBuild.durationString}
+
+Voir les détails : ${BUILD_URL}
+                 """
         }
         failure {
             echo '❌ Pipeline échoué — Vérifiez les logs ci-dessus.'
             sh 'docker compose -f ${COMPOSE_FILE} logs --tail=50 || true'
+            mail to: 'babijou8@gmail.com',
+                 subject: "❌ Jenkins Build #${BUILD_NUMBER} — FAILURE",
+                 body: """
+Le pipeline jenkins-pip #${BUILD_NUMBER} a échoué.
+
+Projet  : ${JOB_NAME}
+Build   : #${BUILD_NUMBER}
+Statut  : FAILURE ❌
+Durée   : ${currentBuild.durationString}
+
+Consulter les logs : ${BUILD_URL}console
+                 """
         }
         always {
             echo '🧹 Nettoyage des images intermédiaires...'
