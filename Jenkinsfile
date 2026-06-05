@@ -98,6 +98,42 @@ pipeline {
             }
         }
 
+        stage('Quality Gate') {
+            steps {
+                echo '🚦 Vérification Quality Gate SonarQube...'
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        JENKINS_NETWORK=$(docker inspect jenkins --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}')
+                        sleep 15
+
+                        # Vérifier Quality Gate Backend
+                        BACKEND_STATUS=$(docker run --rm \
+                            --network $JENKINS_NETWORK \
+                            curlimages/curl:latest \
+                            -s -u "${SONAR_TOKEN}:" \
+                            "http://sonarqube:9000/api/qualitygates/project_status?projectKey=portfolio-backend" \
+                            | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
+                        echo "Backend Quality Gate : $BACKEND_STATUS"
+
+                        # Vérifier Quality Gate Frontend
+                        FRONTEND_STATUS=$(docker run --rm \
+                            --network $JENKINS_NETWORK \
+                            curlimages/curl:latest \
+                            -s -u "${SONAR_TOKEN}:" \
+                            "http://sonarqube:9000/api/qualitygates/project_status?projectKey=portfolio-frontend" \
+                            | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
+                        echo "Frontend Quality Gate : $FRONTEND_STATUS"
+
+                        if [ "$BACKEND_STATUS" = "ERROR" ] || [ "$FRONTEND_STATUS" = "ERROR" ]; then
+                            echo "❌ Quality Gate échouée"
+                            exit 1
+                        fi
+                        echo "✅ Quality Gate OK"
+                    '''
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 echo '🚀 Déploiement avec Docker Compose...'
