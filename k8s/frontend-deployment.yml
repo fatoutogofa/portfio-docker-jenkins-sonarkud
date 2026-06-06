@@ -39,10 +39,3 @@ spec:
               port: 80
             initialDelaySeconds: 5
             periodSeconds: 5
-spec:
-  containers:
-  - name: backend
-    image: ton-image-backend
-    envFrom:
-    - configMapRef:
-        name: portfolio-config
