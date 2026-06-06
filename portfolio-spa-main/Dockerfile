@@ -17,12 +17,13 @@ FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Config Nginx pour React Router (SPA)
+# Le frontend sert juste les fichiers statiques
+# Les appels API sont faits directement depuis le navigateur
 RUN echo 'server { \
     listen 80; \
     root /usr/share/nginx/html; \
     index index.html; \
     location / { try_files $uri $uri/ /index.html; } \
-    location /api/ { proxy_pass http://backend:5000/api/; } \
 }' > /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

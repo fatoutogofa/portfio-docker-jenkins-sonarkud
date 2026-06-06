@@ -11,7 +11,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGODB_URI=mongodb+srv://babijou8_db_user:fFQ5o8JR94spCmF7@cluster0.vsshvby.mongodb.net/
+      - MONGODB_URI=mongodb+srv://babijou8_db_user:D9iwsRZ5tckatyEo@mongodb.aio8c4i.mongodb.net/?appName=mongodb
       - PORT=5000
     restart: always
 

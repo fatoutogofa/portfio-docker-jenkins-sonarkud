@@ -6,6 +6,7 @@ pipeline {
         BACKEND_IMAGE  = 'portfolio-backend'
         FRONTEND_IMAGE = 'portfolio-frontend'
         SONAR_URL      = 'http://sonarqube:9000'
+        DOCKERHUB_USER = 'fatoutogo'
     }
 
     stages {
@@ -28,6 +29,7 @@ pipeline {
             steps {
                 echo '🔨 Build image Docker backend...'
                 sh 'docker build -t ${BACKEND_IMAGE}:latest ./DOCKER-main'
+                sh 'docker tag ${BACKEND_IMAGE}:latest ${DOCKERHUB_USER}/${BACKEND_IMAGE}:latest'
             }
         }
 
@@ -35,6 +37,7 @@ pipeline {
             steps {
                 echo '🔨 Build image Docker frontend...'
                 sh 'docker build -t ${FRONTEND_IMAGE}:latest ./portfolio-spa-main'
+                sh 'docker tag ${FRONTEND_IMAGE}:latest ${DOCKERHUB_USER}/${FRONTEND_IMAGE}:latest'
             }
         }
 
@@ -43,7 +46,7 @@ pipeline {
                 echo '🧪 Test de santé backend...'
                 sh '''
                     docker run --rm \
-                        -e MONGODB_URI=mongodb+srv://babijou8_db_user:fFQ5o8JR94spCmF7@cluster0.vsshvby.mongodb.net/ \
+                        -e MONGODB_URI=mongodb+srv://babijou8_db_user:D9iwsRZ5tckatyEo@mongodb.aio8c4i.mongodb.net/?appName=mongodb \
                         -e PORT=5000 \
                         ${BACKEND_IMAGE}:latest \
                         node -e "console.log('✅ Backend OK')"
@@ -98,7 +101,36 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
+        stage('Push to Docker Hub') {
+            steps {
+                echo '📤 Push images sur Docker Hub...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push ${DOCKERHUB_USER}/${BACKEND_IMAGE}:latest'
+                    sh 'docker push ${DOCKERHUB_USER}/${FRONTEND_IMAGE}:latest'
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo '☸️ Déploiement sur Kubernetes...'
+                sh 'kubectl apply -f k8s/secrets.yml'
+                sh 'kubectl apply -f k8s/backend-deployment.yml'
+                sh 'kubectl apply -f k8s/backend-service.yml'
+                sh 'kubectl apply -f k8s/backend-nodeport.yml'
+                sh 'kubectl apply -f k8s/frontend-deployment.yml'
+                sh 'kubectl apply -f k8s/frontend-service.yml'
+                sh 'kubectl rollout restart deployment/portfolio-backend'
+                sh 'kubectl rollout restart deployment/portfolio-frontend'
+                sh 'kubectl rollout status deployment/portfolio-backend --timeout=120s'
+                sh 'kubectl rollout status deployment/portfolio-frontend --timeout=120s'
+            }
+        }
             steps {
                 echo '🚦 Vérification Quality Gate SonarQube...'
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
