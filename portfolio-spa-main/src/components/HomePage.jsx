@@ -24,7 +24,7 @@ function HomePage() {
             </div>
             <div className="metric-card">
               <strong>1</strong>
-              <span>API REST avec json-server</span>
+              <span>API REST avec MongoDB</span>
             </div>
           </div>
 
@@ -41,7 +41,7 @@ function HomePage() {
         <div className="hero-visual">
           <img
             className="hero-image"
-            src="/projet4.jpg"
+            src="/images/projet4.jpg"
             alt="Visuel de gestion de projet"
           />
         </div>
@@ -56,12 +56,12 @@ function HomePage() {
         </div>
 
         <div className="reference-gallery">
-          <img src="/projet1.jpg" alt="Apercu projet 1" />
-          <img src="/projet2.jpg" alt="Apercu projet 2" />
-          <img src="/projet3.jpg" alt="Apercu projet 3" />
-          <img src="/projet4.jpg" alt="Apercu projet 4" />
-          <img src="/projet5.png" alt="Apercu projet 5" />
-          <img src="/projet1.jpg" alt="Apercu projet 6" />
+          <img src="/images/projet1.jpg" alt="Apercu projet 1" />
+          <img src="/images/projet2.jpg" alt="Apercu projet 2" />
+          <img src="/images/Projet3.jpg" alt="Apercu projet 3" />
+          <img src="/images/projet4.jpg" alt="Apercu projet 4" />
+          <img src="/images/projet5.png" alt="Apercu projet 5" />
+          <img src="/images/projet1.jpg" alt="Apercu projet 6" />
         </div>
       </section>
     </section>
