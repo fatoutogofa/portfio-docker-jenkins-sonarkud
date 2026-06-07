@@ -1,4 +1,4 @@
-const PROJECTS_ENDPOINT = "http://localhost:5000/projects";
+const PROJECTS_ENDPOINT = "http://localhost:8888/projects";
 
 async function parseResponse(response) {
   if (!response.ok) {
