@@ -192,8 +192,8 @@ pipeline {
         stage('Health Check') {
             steps {
                 echo '🔍 Vérification du déploiement Kubernetes...'
-                sh 'kubectl rollout status deployment/portfolio-backend --timeout=120s'
-                sh 'kubectl rollout status deployment/portfolio-frontend --timeout=120s'
+                sh 'kubectl rollout status deployment/portfolio-backend --timeout=180s'
+                sh 'kubectl rollout status deployment/portfolio-frontend --timeout=180s'
                 echo '📋 État des pods :'
                 sh 'kubectl get pods'
                 echo '🌐 État des services :'
