@@ -4,7 +4,7 @@ function DetaillerProjet({ project, onCancel, onEdit }) {
       <p className="section-label">DetaillerProjet</p>
       <img
         className="detail-cover"
-        src={project.image}
+       src={project.imageUrl}
         alt={`Illustration complète du projet ${project.title}`}
       />
       <h2>{project.title}</h2>
