@@ -6,11 +6,10 @@ function HomePage() {
       <section className="hero-banner panel">
         <div className="hero-copy">
           <p className="section-label">Accueil</p>
-          <h2>Application Web SPA de gestion de portfolio</h2>
+          <h2>Portfolio de Fatou Togo</h2>
           <p className="hero-text">
-            Cette page presente la demo demandee par le sujet. Chaque element
-            du menu ouvre sa propre page, et chaque projet possede une page de
-            detail avec consultation et edition.
+            Etudiante en DevOps, passionnee par Kubernetes, CI/CD et le cloud.
+            Ce portfolio presente mes projets realises avec Docker, Jenkins et MongoDB.
           </p>
 
           <div className="hero-metrics">
@@ -41,8 +40,9 @@ function HomePage() {
         <div className="hero-visual">
           <img
             className="hero-image"
-            src="/images/projet4.jpg"
-            alt="Visuel de gestion de projet"
+            src="/images/fatou.jpg"
+            alt="Photo de Fatou Togo"
+            style={{ borderRadius: '50%', objectFit: 'cover', width: '300px', height: '300px' }}
           />
         </div>
       </section>
