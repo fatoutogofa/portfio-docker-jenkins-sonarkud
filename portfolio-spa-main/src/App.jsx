@@ -15,8 +15,8 @@ function App() {
               alt="Logo Portfolio React"
             />
             <div className="brand-copy">
-              <p className="brand-group">React JS</p>
-              <h1>Portfolio G5</h1>
+              <p className="brand-group">DevOps Engineer</p>
+              <h1>Fatou Togo</h1>
             </div>
           </Link>
 
@@ -65,8 +65,8 @@ function App() {
 
       <footer className="site-footer">
         <div className="site-footer-inner">
-          <p>Application SPA de gestion de portfolio realisee avec React JS.</p>
-          <p>Composants, props, etat local, formulaires, HTTP et routage.</p>
+         <p>Portfolio DevOps de Fatou Togo — Kubernetes, CI/CD, Docker, MongoDB.</p>
+         <p>Deploye sur Kubernetes avec Jenkins, SonarQube et Prometheus.</p>
         </div>
       </footer>
     </div>
