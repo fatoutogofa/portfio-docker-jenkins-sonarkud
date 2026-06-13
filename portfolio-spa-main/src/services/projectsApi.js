@@ -1,4 +1,4 @@
-const PROJECTS_ENDPOINT = "http://portfolio.local:8888/api/projects";
+const PROJECTS_ENDPOINT = "/api/projects";
 
 async function parseResponse(response) {
   if (!response.ok) {

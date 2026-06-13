@@ -13,12 +13,12 @@ variable "cluster_name" {
 variable "node_instance_type" {
   description = "Type d instance EC2"
   type        = string
-  default     = "t3.medium"
+  default     = "t3.small"
 }
 
 
 variable "desired_nodes" {
   description = "Nombre de nodes desires"
   type        = number
-  default     = 2
+  default     = 1
 }
