@@ -11,8 +11,9 @@ function App() {
           <Link className="brand" to="/">
             <img
               className="brand-logo"
-              src="/favicon.svg"
-              alt="Logo Portfolio React"
+              src="/images/fatou.jpg"
+              alt="Photo Fatou Togo"
+              style={{ borderRadius: '50%', objectFit: 'cover' }}
             />
             <div className="brand-copy">
               <p className="brand-group">DevOps Engineer</p>
